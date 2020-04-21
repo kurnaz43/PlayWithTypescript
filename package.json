@@ -1,0 +1,14 @@
+{
+  "name": "windowtest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Kurnaz",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^8.2.1"
+  }
+}
