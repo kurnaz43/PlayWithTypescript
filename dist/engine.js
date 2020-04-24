@@ -10,7 +10,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var kurnaz = __importStar(require("./canvas"));
 var MapEntities_1 = require("./MapEntities");
 var Line_1 = require("./Line");
-exports.myLine = new Line_1.Line(300, 300, 400, 400, 'rgb(255,255,255)');
+var Point_1 = require("./Point");
+exports.myLine = new Line_1.Line(new Point_1.Point(300, 300), new Point_1.Point(300, 300), 'rgb(255,255,255)');
 var Engine = /** @class */ (function () {
     function Engine() {
         this._canvas = null;
@@ -23,11 +24,11 @@ var Engine = /** @class */ (function () {
         return ctx;
     };
     Engine.prototype.init = function () {
-        exports.object = new MapEntities_1.MapEntities(99, 99, 10, 'rgb(255,255,255)');
+        exports.object = new MapEntities_1.MapEntities(new Point_1.Point(99, 99), 10, 'rgb(255,255,255)');
         this._canvas = kurnaz.Canvas.initialize('myCanvas');
         this._ctx = this._canvas.getContext('2d');
         var self = this;
-        exports.object.drawRDMWalls(this._ctx, 5);
+        exports.object.initialdrawRDMWalls(this._ctx, 5);
         setInterval(function () { self.loop(); }, 1000 / 30);
     };
     Engine.prototype.update = function () {
@@ -45,7 +46,8 @@ var Engine = /** @class */ (function () {
                 this._ctx.canvas.height = window.innerHeight;
                 this._ctx.fillStyle = 'rgb(0,0,0)';
                 this._ctx.fillRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height);
-                exports.myLine.draw(this._ctx);
+                //object.drawWalls(this._ctx);
+                //myLine.draw(this._ctx);
                 exports.object.draw(this._ctx);
             }
             else {
