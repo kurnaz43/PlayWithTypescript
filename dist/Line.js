@@ -49,9 +49,12 @@ var Line = /** @class */ (function () {
         exports._myWalls.push(new Line(randomPointA, randomPointB, color));
     };
     Line.prototype.draw = function (ctx) {
+        var color = this._color;
+        ctx.beginPath();
         ctx.moveTo(this._pointA.get_x, this._pointA.get_y);
         ctx.lineTo(this._pointB.get_x, this._pointB.get_y);
-        ctx.strokeStyle = this._color;
+        ctx.strokeStyle = color;
+        ctx.closePath();
         ctx.stroke();
     };
     /**
