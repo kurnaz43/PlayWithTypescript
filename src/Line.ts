@@ -1,58 +1,40 @@
+import { Point } from "./Point";
+
+export var _myWalls = new Array();
 export class Line {
-    private _xBeginPos: number;
-    private _yBeginPos: number;
-    private _xEndPos: number;
-    private _yEndPos: number;
+
     private _color: string;
-    private _angle: any;
 
-    constructor(xBeginPos: number, yBeginPos: number, _xEndPos: number, _yEndPos: number, color: string, angle?: number) {
-        if (angle !== undefined) {
-            this._xBeginPos = xBeginPos;
-            this._yBeginPos = yBeginPos;
-            this._xEndPos = _xEndPos;
-            this._yEndPos = _yEndPos;
-            this._color = color;
-            this._angle = angle;
-        }
-        else {
-            this._xBeginPos = xBeginPos;
-            this._yBeginPos = yBeginPos;
-            this._xEndPos = _xEndPos;
-            this._yEndPos = _yEndPos;
-            this._color = color;
-        }
-    }
-    set setXBeginPos(xBeginPos: any) {
-        this._xBeginPos = xBeginPos;
-    }
-    set setYBeginPos(YBeginPos: any) {
-        this._yBeginPos = YBeginPos;
-    }
-    set setXEndPos(XEndPos: any) {
-        this._xEndPos = XEndPos;
-    }
-    set setYEndPos(YEndPos: any) {
-        this._yEndPos = YEndPos;
-    }
-    get getXBeginPos(): number {
-        return this._xBeginPos;
-    }
-    get getYBeginPos(): number {
-        return this._yBeginPos;
-    }
-    get getXEndPos(): number {
-        return this._xEndPos;
-    }
-    get getYEndPos(): number {
-        return this._yEndPos;
+    private _pointA: Point;
+    private _pointB: Point;
+    private _pointC: Point;
+    private _pointD: Point;
+    constructor(pointA: Point, pointB: Point, color: string) {
+        this._pointA = pointA;
+        this._pointB = pointB;
+        this._color = color;
     }
 
-    static drawRandomLine(ctx: any): Line {
-        var xBegin: number = Math.floor(Math.random() * Math.floor(window.innerWidth));
-        var yBegin: number = Math.floor(Math.random() * Math.floor(window.innerHeight));
-        var XEnd: number = Math.floor(Math.random() * Math.floor(window.innerWidth));
-        var yEnd: number = Math.floor(Math.random() * Math.floor(window.innerHeight));
+    set setPointA(pointA: Point) {
+        this._pointA = pointA;
+    }
+    set setPointB(pointB: Point) {
+        this._pointB = pointB;
+    }
+    get getPointA(): Point {
+        return this._pointA;
+    }
+    get getPointB(): Point {
+        return this._pointB;
+    }
+
+    static drawRandomLine(ctx: any): void {
+        var randomPointA: Point = new Point(
+            Math.floor(Math.random() * Math.floor(window.innerWidth)),
+            Math.floor(Math.random() * Math.floor(window.innerHeight)));
+        var randomPointB: Point = new Point(
+            Math.floor(Math.random() * Math.floor(window.innerWidth)),
+            Math.floor(Math.random() * Math.floor(window.innerHeight)));
         var color: string =
             "rgb(" +
             Math.floor(Math.random() * Math.floor(255)) +
@@ -61,18 +43,12 @@ export class Line {
             "," +
             Math.floor(Math.random() * Math.floor(255)) +
             ")";
-
-        ctx.moveTo(xBegin, yBegin);
-        ctx.lineTo(XEnd, yEnd);
-        ctx.strokeStyle = color;
-        ctx.stroke();
-        debugger;
-        return new Line(xBegin, yBegin, XEnd, yEnd, color);;
+        _myWalls.push(new Line(randomPointA, randomPointB, color));
     }
 
     public draw(ctx: any): void {
-        ctx.moveTo(this._xBeginPos, this._yBeginPos);
-        ctx.lineTo(this._xEndPos, this._yEndPos);
+        ctx.moveTo(this._pointA.get_x, this._pointA.get_y);
+        ctx.lineTo(this._pointB.get_x, this._pointB.get_y);
         ctx.strokeStyle = this._color;
         ctx.stroke();
     }
@@ -80,44 +56,32 @@ export class Line {
     /**
      * checkKollison
      */
-    public checkKollison(checkLine: Line): Array<number> {
-        let x1 = this._xBeginPos
-        let x2 = this._xEndPos
-        let x3 = checkLine._xBeginPos
-        let x4 = checkLine._xEndPos
-        let y1 = this._yBeginPos
-        let y2 = this._yEndPos
-        let y3 = checkLine._yBeginPos
-        let y4 = checkLine._xEndPos
-
-        var x: number = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
-        var y: number = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
-        let numb: number[] = [x, y]
-        let numb2: number[] = [9999]
-        if (isNaN(x) || isNaN(y)) {
-            return numb2;
-        } else {
-            if (x1 >= x2) {
-                if (!(x2 <= x && x <= x1)) { return numb2; }
-            } else {
-                if (!(x1 <= x && x <= x2)) { return numb2; }
-            }
-            if (y1 >= y2) {
-                if (!(y2 <= y && y <= y1)) { return numb2; }
-            } else {
-                if (!(y1 <= y && y <= y2)) { return numb2; }
-            }
-            if (x3 >= x4) {
-                if (!(x4 <= x && x <= x3)) { return numb2; }
-            } else {
-                if (!(x3 <= x && x <= x4)) { return numb2; }
-            }
-            if (y3 >= y4) {
-                if (!(y4 <= y && y <= y3)) { return numb2 }
-            } else {
-                if (!(y3 <= y && y <= y4)) { return numb2; }
-            }
+    public lineIntersection(lineToCheck: Line) {
+        this._pointC = lineToCheck.getPointA;
+        this._pointD = lineToCheck.getPointB;
+        var z1 = (this._pointA.get_x - this._pointB.get_x);
+        var z2 = (this._pointC.get_x - this._pointD.get_x);
+        var z3 = (this._pointA.get_y - this._pointB.get_y);
+        var z4 = (this._pointC.get_y - this._pointD.get_y);
+        var dist = z1 * z4 - z3 * z2;
+        if (dist == 0) {
+            return null;
         }
-        return numb;
+        var tempA = (this._pointA.get_x * this._pointB.get_y - this._pointA.get_y * this._pointB.get_x);
+        var tempB = (this._pointC.get_x * this._pointD.get_y - this._pointC.get_y * this._pointD.get_x);
+        var xCoor = (tempA * z2 - z1 * tempB) / dist;
+        var yCoor = (tempA * z4 - z3 * tempB) / dist;
+
+        if (xCoor < Math.min(this._pointA.get_x, this._pointB.get_x) || xCoor > Math.max(this._pointA.get_x, this._pointB.get_x) ||
+            xCoor < Math.min(this._pointC.get_x, this._pointD.get_x) || xCoor > Math.max(this._pointC.get_x, this._pointD.get_x)) {
+            return null;
+        }
+        if (yCoor < Math.min(this._pointA.get_y, this._pointB.get_y) || yCoor > Math.max(this._pointA.get_y, this._pointB.get_y) ||
+            yCoor < Math.min(this._pointC.get_y, this._pointD.get_y) || yCoor > Math.max(this._pointC.get_y, this._pointD.get_y)) {
+            return null;
+        }
+
+        return new Point(xCoor, yCoor);
     }
+
 }
