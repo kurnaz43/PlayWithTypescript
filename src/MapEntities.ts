@@ -8,7 +8,7 @@ export class MapEntities {
     private _r: number;
     private _color: string;
     private i: number = 0;
-    private _myarray: any;
+    private _intersectionPoint: any;
     private _myLightLines = new Array();
 
     constructor(actPos: Point, r: number, color: string) {
@@ -37,7 +37,7 @@ export class MapEntities {
             this._actPos.set_y = e.y;
         }
         //this.clacRDMWalls(5);
-        this.clacLight(200, 0.5, 0);
+        this.clacLight(2000, 0.5, 0);
     }
 
     public draw(ctx: any): void {
@@ -85,13 +85,21 @@ export class MapEntities {
                 that._color);
             // console.log(this._myWalls);
 
-            for (let i: number = 0; i < _myWalls.length; i++) {
-                that._myarray = lightLine.lineIntersection(_myWalls[i]);
+            let rekord: number = Infinity;
+            let closest;
+            for (let wall of _myWalls) {
+                that._intersectionPoint = lightLine.lineIntersection(wall);
                 //console.log(lightLine.lineIntersection(_myWalls[i]));
-                if (that._myarray !== null) {
-                    lightLine.setPointB = new Point(that._myarray[0], that._myarray[1]);
-                    //console.log("geschnitten")
-                    break;
+                if (that._intersectionPoint) {
+                    let d = that._actPos.distanceTo(that._intersectionPoint);
+                    if (d < rekord) {
+                        rekord = d;
+                        closest = this._intersectionPoint;
+
+                    }
+                }
+                if (closest !== undefined) {
+                    lightLine.setPointB = closest;
                 }
             }
             that._myLightLines.push(lightLine);

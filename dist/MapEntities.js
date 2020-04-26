@@ -44,7 +44,7 @@ var MapEntities = /** @class */ (function () {
             this._actPos.set_y = e.y;
         }
         //this.clacRDMWalls(5);
-        this.clacLight(200, 0.5, 0);
+        this.clacLight(2000, 0.5, 0);
     };
     MapEntities.prototype.draw = function (ctx) {
         this.drawWalls(ctx);
@@ -80,13 +80,21 @@ var MapEntities = /** @class */ (function () {
             theta = x + uberspring;
             var lightLine = new Line_1.Line(new Point_1.Point(that._actPos.get_x, that._actPos.get_y), new Point_1.Point(that._actPos.get_x + r * Math.cos(Math.PI * theta / 180.0), that._actPos.get_y + r * Math.sin(Math.PI * theta / 180.0)), that._color);
             // console.log(this._myWalls);
-            for (var i = 0; i < Line_1._myWalls.length; i++) {
-                that._myarray = lightLine.lineIntersection(Line_1._myWalls[i]);
+            var rekord = Infinity;
+            var closest = void 0;
+            for (var _i = 0, _myWalls_1 = Line_1._myWalls; _i < _myWalls_1.length; _i++) {
+                var wall = _myWalls_1[_i];
+                that._intersectionPoint = lightLine.lineIntersection(wall);
                 //console.log(lightLine.lineIntersection(_myWalls[i]));
-                if (that._myarray !== null) {
-                    lightLine.setPointB = new Point_1.Point(that._myarray[0], that._myarray[1]);
-                    //console.log("geschnitten")
-                    break;
+                if (that._intersectionPoint) {
+                    var d = that._actPos.distanceTo(that._intersectionPoint);
+                    if (d < rekord) {
+                        rekord = d;
+                        closest = this._intersectionPoint;
+                    }
+                }
+                if (closest !== undefined) {
+                    lightLine.setPointB = closest;
                 }
             }
             that._myLightLines.push(lightLine);
