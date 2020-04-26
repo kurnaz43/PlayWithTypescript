@@ -9,10 +9,16 @@ export class Line {
     private _pointB: Point;
     private _pointC: Point;
     private _pointD: Point;
-    constructor(pointA: Point, pointB: Point, color: string) {
-        this._pointA = pointA;
-        this._pointB = pointB;
-        this._color = color;
+    constructor(pointA: Point, pointB: Point, color?: string) {
+        if (color !== undefined) {
+            this._pointA = pointA;
+            this._pointB = pointB;
+            this._color = color;
+        }
+        else {
+            this._pointA = pointA;
+            this._pointB = pointB;
+        }
     }
 
     set setPointA(pointA: Point) {
